@@ -1,0 +1,48 @@
+rows=400, cols=8, no-shows=91 (22.8%)
+train=280 (no-show 22.9%), test=120 (no-show 22.5%)
+
+CV accuracy on training set by depth (min_samples_leaf=10):
+  depth 1: 0.782
+  depth 2: 0.807
+  depth 3: 0.793
+  depth 4: 0.800
+  depth 5: 0.814
+  depth 6: 0.825
+chosen depth = 3
+
+Tree (root first):
+|--- prior_no_shows <= 2.50
+|   |--- sms_reminder <= 0.50
+|   |   |--- prior_no_shows <= 0.50
+|   |   |   |--- weights: [46.00, 10.00] class: 0
+|   |   |--- prior_no_shows >  0.50
+|   |   |   |--- weights: [23.00, 29.00] class: 1
+|   |--- sms_reminder >  0.50
+|   |   |--- age <= 18.50
+|   |   |   |--- weights: [9.00, 5.00] class: 0
+|   |   |--- age >  18.50
+|   |   |   |--- weights: [136.00, 5.00] class: 0
+|--- prior_no_shows >  2.50
+|   |--- weights: [2.00, 15.00] class: 1
+
+Feature importances:
+ prior_no_shows    0.627
+sms_reminder      0.302
+age               0.071
+
+TEST SET
+baseline  TN=93 FP=0 FN=27 TP=0 | acc=0.775 precision=0.000 recall=0.000
+v1        TN=86 FP=7 FN=7 TP=20 | acc=0.883 precision=0.741 recall=0.741
+v1 training accuracy = 0.839 vs test accuracy = 0.883
+
+Decisions for upcoming appointments
+  D: leaf 4 (leaf no-show rate 56%) -> OVERBOOK   path: prior_no_shows=1 <= 2.50 ; sms_reminder=0 <= 0.50 ; prior_no_shows=1 > 0.50
+  E: leaf 7 (leaf no-show rate 4%) -> HOLD   path: prior_no_shows=0 <= 2.50 ; sms_reminder=1 > 0.50 ; age=61 > 18.50
+
+VALUE on 120 test appointments
+  baseline: total $-3,240  per appointment $-27.00
+  v1:       total $-1,260  per appointment $-10.50
+  improvement per appointment: $16.50
+  at an assumed 20,000 appointments/year: baseline $-540,000, v1 $-210,000, gain $330,000/yr
+
+saved out/tree.png
